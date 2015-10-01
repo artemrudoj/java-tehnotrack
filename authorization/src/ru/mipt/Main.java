@@ -1,8 +1,14 @@
 package ru.mipt;
 
+
 public class Main {
 
     public static void main(String[] args) {
-	// write your code here
+
+        UserStore userStore = new UserStore();
+        AuthorizationService service = new AuthorizationService(userStore);
+
+        service.startAuthorization();
+
     }
 }
