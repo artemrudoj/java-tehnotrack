@@ -60,7 +60,7 @@ public class IOBasic {
 
 
 
-        String data[] = {"A", "B", "C", null, "D"};
+        String data[] = {"A", "B", "C", "D"};
         for (String arg : data) {
             System.out.println(arg.length());
         }

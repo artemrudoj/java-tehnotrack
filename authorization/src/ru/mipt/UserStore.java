@@ -1,24 +1,35 @@
 package ru.mipt;
 
 
+import java.util.ArrayList;
+
 public class UserStore {
 
+    ArrayList<User> users = new ArrayList<User>();
 
-    // Вам нужно выбрать, как вы будете хранить ваших пользователей, например в массиве User users[] = new User[100];
-
-    // проверить, есть ли пользователь с таким именем
-    // если есть, вернуть true
     boolean isUserExist(String name) {
-        return false;
+        if ( findUserByName( name) == null)
+            return false;
+        else
+            return true;
     }
 
-    // Добавить пользователя в хранилище
-    void addUser(User user) {
-
+    User addUser(User user) {
+        users.add( user );
+        return  users.get( users.size() - 1);
     }
 
+    User findUserByName( String name ){
+        for (User user : users) {
+            if (name.equals(user.getName())) {
+                return user;
+            }
+        }
+        return null;
+    }
     // Получить пользователя по имени и паролю
     User getUser(String name, String pass) {
-        return null;
+        User user = findUserByName( name);
+        return user.getPass().equals( pass) ? user : null;
     }
 }

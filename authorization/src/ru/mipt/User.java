@@ -22,7 +22,14 @@ public class User {
         return pass;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+
+    @Override
+    public String toString() {
+        StringBuffer str = new StringBuffer();
+        str.append("login = ");
+        str.append(name);
+        str.append("\npassword = ");
+        str.append(pass);
+        return str.toString();
     }
 }
