@@ -1,9 +1,20 @@
-package ru.mipt;
+package ru.mipt.session;
 
 
 public class User {
     private String name;
     private String pass;
+    private String nick;
+
+    public String getNick() {
+        return nick;
+    }
+
+    public void setNick(String nick) {
+        this.nick = nick;
+    }
+
+
 
     public User(String name, String pass) {
         this.name = name;
@@ -22,6 +33,9 @@ public class User {
         return pass;
     }
 
+    public void setPass(String pass) {
+        this.pass = pass;
+    }
 
     @Override
     public String toString() {
