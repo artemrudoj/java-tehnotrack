@@ -12,15 +12,7 @@ public class AuthorizationService {
         this.userStore = userStore;
     }
 
-
-
-    public User login(String name) {
-        if (!userStore.isUserExist(name)) {
-            System.out.println("Error: User does not exist");
-            return null;
-        }
-        System.out.println("Please, enter password");
-        String password = scanner.next();
+    public User login(String name, String password) {
         return userStore.getUser(name, password);
     }
 

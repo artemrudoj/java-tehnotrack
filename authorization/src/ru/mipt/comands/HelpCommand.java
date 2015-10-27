@@ -18,13 +18,13 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public int execute(Session session, String[] args) {
+    public ReturnCode execute(Session session, String[] args) {
         System.out.println("Executing help");
         /*
         В простом случае просто выводим данные на консоль
         Если будем работать чере сеть, то команде придется передать также объект для работы с сетью
 
          */
-        return 0;
+        return new ReturnCode(ReturnCode.SUCCESS);
     }
 }

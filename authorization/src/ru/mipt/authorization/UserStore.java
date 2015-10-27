@@ -35,8 +35,9 @@ public class UserStore {
     User getUser(String name, String pass) {
         User user = findUserByName(name);
         if (user != null) {
-            user.setPass(pass);
+            if (user.getPass().equals(pass))
+                return user;
         }
-        return user;
+        return null;
     }
 }

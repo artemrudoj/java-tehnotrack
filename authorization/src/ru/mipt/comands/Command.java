@@ -20,5 +20,5 @@ public interface Command {
      *
      * В качестве пример оставлю void
      */
-    int execute(Session session, String[] args);
+    ReturnCode execute(Session session, String[] args);
 }

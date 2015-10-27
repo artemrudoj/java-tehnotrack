@@ -5,19 +5,42 @@ package ru.mipt.hisorystorage;
  */
 public class Message {
 
-    String data;
+    String message;
     long time;
+    final int messageType;
+    int id;
 
-    public String getData() {
-        return data;
+    public Message(String message, int messageType) {
+        this.message = message;
+        this.messageType = messageType;
+    }
+
+    public Message(int messageType) {
+        this.messageType = messageType;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getMessageType() {
+        return messageType;
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     public String PrintMessageWith() {
-
+        return null;
     }
 
-    public void setData(String data) {
-        this.data = data;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public long getTime() {

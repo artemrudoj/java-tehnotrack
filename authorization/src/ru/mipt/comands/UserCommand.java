@@ -8,15 +8,16 @@ import ru.mipt.session.User;
  */
 public class UserCommand implements Command {
     @Override
-    public int execute(Session session, String[] args) {
+    public ReturnCode execute(Session session, String[] args) {
         if (!session.isSeesionExist())
-            return ReturnCode.SESSION_ALREADY_HAVE_USER;
+            return new ReturnCode(ReturnCode.SESSION_DOES_NOT_HAVE_USER);
 
         switch (args.length) {
             case 2:
                 session.getSessionUser().setNick(args[1]);
-                return ReturnCode.SUCCESS;
+                return new ReturnCode(ReturnCode.SUCCESS);
+            default:
+                return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         }
-        return ReturnCode.INCORRECT_ARGUMENTS;
     }
 }

@@ -9,18 +9,17 @@ import java.util.ArrayList;
  */
 public class FindCommand implements Command {
     @Override
-    public int execute(Session session, String[] args) {
+    public ReturnCode execute(Session session, String[] args) {
         if (!session.isSeesionExist())
-            return ReturnCode.USER_NOT_EXIST;
+            return new ReturnCode(ReturnCode.SESSION_DOES_NOT_HAVE_USER);
         switch (args.length) {
             case 2:
                 ArrayList<String> finded = session.getHistoryStorage().findMessage(args[1]);
                 if (finded.isEmpty())
-                    return ReturnCode.COMMAND_NOT_FOUNDED;
-                for (String str : finded)
-                    System.out.println(str);
-                return ReturnCode.SUCCESS;
+                    return new ReturnCode(ReturnCode.COMMAND_NOT_FOUNDED);
+                return new ReturnCode(ReturnCode.SUCCESS, finded.toString());
+            default:
+                return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         }
-        return ReturnCode.INCORRECT_ARGUMENTS;
     }
 }

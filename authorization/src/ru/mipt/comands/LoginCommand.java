@@ -19,33 +19,20 @@ public class LoginCommand implements Command {
     }
 
     @Override
-    public int execute(Session session, String[] args) {
-        System.out.println("Executing login");
+    public ReturnCode execute(Session session, String[] args) {
 
         if (session.isSeesionExist())
-            return ReturnCode.SESSION_ALREADY_HAVE_USER;
+            return new ReturnCode(ReturnCode.SESSION_ALREADY_HAVE_USER);
 
         switch (args.length) {
-            case 1:
-                try {
-                    User user = service.createUser();
-                    session.setSessionUser(user);
-                    return ReturnCode.SUCCESS;
-                }
-                catch (NullPointerException e) {
-                    return ReturnCode.USER_ALREADY_EXIST;
-                }
-            case 2:
-                try {
-                    User user = service.login(args[1]);
-                    session.setSessionUser(user);
-                    return ReturnCode.SUCCESS;
-                }
-                catch (NullPointerException e) {
-                    return ReturnCode.USER_NOT_EXIST;
-                }
-
+            case 3:
+                User user = service.login(args[1], args[2]);
+                if (user == null)
+                    return new ReturnCode(ReturnCode.USER_NOT_EXIST);
+                session.setSessionUser(user);
+                return new ReturnCode(ReturnCode.SUCCESS);
+            default:
+                return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         }
-        return ReturnCode.INCORRECT_ARGUMENTS;
     }
 }

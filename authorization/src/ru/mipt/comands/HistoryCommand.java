@@ -7,26 +7,27 @@ import ru.mipt.session.Session;
  */
 public class HistoryCommand implements Command {
     @Override
-    public int execute(Session session, String[] args) {
+    public ReturnCode execute(Session session, String[] args) {
         if (!session.isSeesionExist())
-            return ReturnCode.USER_NOT_EXIST;
+            return new ReturnCode(ReturnCode.SESSION_DOES_NOT_HAVE_USER);
 
         switch (args.length) {
             case 2:
                 try {
                     int N = Integer.parseInt(args[1]);
-                    for(String str : session.getHistoryStorage().returnMessage(N)) {
-                        if( str == null )
-                            return ReturnCode.SUCCESS;
-                        System.out.println(str);
-                        return ReturnCode.SUCCESS;
+                    for (String str : session.getHistoryStorage().returnMessage(N)) {
+                        if (str == null) {
+                            return new ReturnCode(ReturnCode.SUCCESS, "Message did not find");
+                        }
+                        return new ReturnCode(ReturnCode.SUCCESS, str);
                     }
                 }
                 catch (NumberFormatException e) {
-                    return ReturnCode.INCORRECT_ARGUMENTS;
+                    return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
                 }
+                default:
+                    return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         }
-        return ReturnCode.INCORRECT_ARGUMENTS;
     }
 }
 

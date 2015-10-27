@@ -3,7 +3,6 @@ package ru.mipt.hisorystorage;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 
 /**
@@ -15,8 +14,8 @@ public class BasedOnListStorage implements HistoryStorage {
 
     @Override
     public void addMessage(String msg, long time) {
-        Message currentMessage = new Message();
-        currentMessage.setData(msg);
+        Message currentMessage = new Message(messageType);
+        currentMessage.setMessage(msg);
         currentMessage.setTime(time);
         listStorage.add(currentMessage);
     }
@@ -25,9 +24,9 @@ public class BasedOnListStorage implements HistoryStorage {
     public ArrayList<String> findMessage(String msg) {
         ArrayList<String> findedCommands = new ArrayList<String>();
         for (Message currentMsg : listStorage) {
-            for (String data : currentMsg.getData().split(" ")) {
+            for (String data : currentMsg.getMessage().split(" ")) {
                 if (msg.equals(data)) {
-                    findedCommands.add(currentMsg.getData());
+                    findedCommands.add(currentMsg.getMessage());
                     break;
                 }
             }
@@ -40,7 +39,7 @@ public class BasedOnListStorage implements HistoryStorage {
         String[] returnedStrings = new String[N];
         Iterator<Message> iterator = listStorage.descendingIterator();
         for (int i = 0; i < N && iterator.hasNext(); i++) {
-            returnedStrings[i] = iterator.next().getData();
+            returnedStrings[i] = iterator.next().getMessage();
         }
         return  returnedStrings;
     }
