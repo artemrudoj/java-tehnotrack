@@ -1,6 +1,6 @@
 package ru.mipt.threads;
 
-import ru.mipt.hisorystorage.Message;
+import ru.mipt.protocol.Message;
 
 import java.io.IOException;
 
@@ -14,4 +14,6 @@ public interface ConnectionHandler extends Runnable {
     void addListener(MessageListener listener);
 
     void stop();
+
+
 }

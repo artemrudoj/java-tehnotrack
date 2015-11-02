@@ -1,6 +1,7 @@
 package ru.mipt.threads;
 
-import ru.mipt.hisorystorage.Message;
+import ru.mipt.protocol.Message;
+import ru.mipt.protocol.Protocol;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,11 +26,16 @@ public class SocketConnectionHandler implements ConnectionHandler {
     private Socket socket;
     private InputStream in;
     private OutputStream out;
+    private Long sessionId;
 
     public SocketConnectionHandler(Socket socket) throws IOException {
         this.socket = socket;
         in = socket.getInputStream();
         out = socket.getOutputStream();
+    }
+
+    public void setSessionId(Long id) {
+        sessionId = id;
     }
 
     @Override

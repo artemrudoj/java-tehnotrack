@@ -1,7 +1,7 @@
 package ru.mipt.threads;
 
 
-import ru.mipt.hisorystorage.Message;
+import ru.mipt.protocol.Message;
 
 /**
  * Слушает сообщения

@@ -7,8 +7,6 @@ import java.util.ArrayList;
  */
 public interface HistoryStorage {
 
-
-
     void addMessage(String msg, long time);
 
     ArrayList<String> findMessage(String msg);

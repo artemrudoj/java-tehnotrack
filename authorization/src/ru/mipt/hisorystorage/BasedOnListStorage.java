@@ -1,5 +1,7 @@
 package ru.mipt.hisorystorage;
 
+import ru.mipt.protocol.Message;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -14,7 +16,7 @@ public class BasedOnListStorage implements HistoryStorage {
 
     @Override
     public void addMessage(String msg, long time) {
-        Message currentMessage = new Message(messageType);
+        Message currentMessage = new Message(msg);
         currentMessage.setMessage(msg);
         currentMessage.setTime(time);
         listStorage.add(currentMessage);

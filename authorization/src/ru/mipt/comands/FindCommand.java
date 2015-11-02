@@ -11,7 +11,7 @@ public class FindCommand implements Command {
     @Override
     public ReturnCode execute(Session session, String[] args) {
         if (!session.isSeesionExist())
-            return new ReturnCode(ReturnCode.SESSION_DOES_NOT_HAVE_USER);
+            return new ReturnCode(ReturnCode.NO_CURRENT_SESSION);
         switch (args.length) {
             case 2:
                 ArrayList<String> finded = session.getHistoryStorage().findMessage(args[1]);

@@ -2,6 +2,7 @@ package ru.mipt.comands;
 
 
 import ru.mipt.authorization.AuthorizationService;
+import ru.mipt.hisorystorage.BasedOnListStorage;
 import ru.mipt.session.Session;
 import ru.mipt.session.User;
 
@@ -21,14 +22,17 @@ public class LoginCommand implements Command {
     @Override
     public ReturnCode execute(Session session, String[] args) {
 
-        if (session.isSeesionExist())
+        if (session != null)
             return new ReturnCode(ReturnCode.SESSION_ALREADY_HAVE_USER);
+    //    if (session.isSeesionExist())
+
 
         switch (args.length) {
             case 3:
                 User user = service.login(args[1], args[2]);
                 if (user == null)
                     return new ReturnCode(ReturnCode.USER_NOT_EXIST);
+                session = new Session(new BasedOnListStorage());
                 session.setSessionUser(user);
                 return new ReturnCode(ReturnCode.SUCCESS);
             default:
