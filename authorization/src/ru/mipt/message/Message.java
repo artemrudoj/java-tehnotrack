@@ -1,20 +1,28 @@
-package ru.mipt.protocol;
+package ru.mipt.message;
+
+import java.io.Serializable;
 
 /**
  * Created by artem on 19.10.15.
  */
-public class Message {
+public class Message  implements Serializable {
 
     long sessionId;
-    long chatId;
     long time;
     long senderId;
-
+    long chatId;
     short messageType;
+    long messageId;
     String message;
 
-    public Message(String line) {
+    public Message(short messageType, String message, long time) {
+        this.messageType = messageType;
+        this.message = message;
+        this.time = time;
+    }
 
+    public Message(String line) {
+        message = line;
     }
 
     public Message(short returnCode) {
@@ -69,9 +77,12 @@ public class Message {
         this.time = time;
     }
 
-   
+    public long getMessageId() {
+        return messageId;
+    }
 
-    public Message(short messageType, String message) {
+    public void setMessageId(long messageId) {
+        this.messageId = messageId;
     }
 }
 

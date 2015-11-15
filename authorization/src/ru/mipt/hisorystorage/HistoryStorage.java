@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public interface HistoryStorage {
 
-    void addMessage(String msg, long time);
+    void addMessage(String msg);
 
     ArrayList<String> findMessage(String msg);
 

@@ -39,9 +39,9 @@ public class Session {
         this.historyStorage = historyStorage;
     }
 
-    public void storeMessage(String msg, long time) {
+    public void storeMessage(String msg) {
         if (isSeesionExist()) {
-            historyStorage.addMessage(msg, time);
+            historyStorage.addMessage(msg);
         }
     }
 }

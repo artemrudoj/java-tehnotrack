@@ -1,5 +1,7 @@
 package ru.mipt.session;
 
+import ru.mipt.message.ReturnCode;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -11,21 +13,16 @@ public class SessionStorage {
     // I suppose, that the most popular usage of this is geting element by id . ~o(1)
     Map<Long, Session> sessions = new HashMap<>();
     Map<Long, Long> userToSessionMatch = new HashMap<>();
-    AtomicLong atomicLong = new AtomicLong(0);
 
 
     public Session getSessionById(Long id) {
+        if (id == ReturnCode.NO_CURRENT_SESSION)
+            return null;
         return sessions.get(id);
     }
 
-    public Long addSession(Session session){
-        Long newId = atomicLong.getAndIncrement();
-        sessions.put(newId, session);
-        return newId;
-    }
-
-    public void createUserToSessionMatch(Long userId, Long sessionId) {
-        userToSessionMatch.put( userId, sessionId);
+    public void addSession(Session session, long sessionId){
+        sessions.put(sessionId, session);
     }
 
     public Long getSessionIdByUserId(Long userId) {

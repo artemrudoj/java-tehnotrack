@@ -1,4 +1,4 @@
-package ru.mipt.comands;
+package ru.mipt.message;
 
 /**
  * Created by artem on 18.10.15.

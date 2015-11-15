@@ -2,37 +2,40 @@ package ru.mipt.threads;
 
 
 
-import ru.mipt.InputHandler;
 import ru.mipt.authorization.AuthorizationService;
 import ru.mipt.authorization.UserStore;
+import ru.mipt.chat.SimpleChatStorage;
 import ru.mipt.comands.*;
 import ru.mipt.hisorystorage.BasedOnListStorage;
 import ru.mipt.hisorystorage.HistoryStorage;
-import ru.mipt.protocol.Message;
-import ru.mipt.session.Chat;
+import ru.mipt.message.Message;
+import ru.mipt.message.ReturnCode;
+import ru.mipt.chat.SimpleChat;
+import ru.mipt.chat.ChatStorage;
 import ru.mipt.session.SessionStorage;
+import ru.mipt.threadstrorage.HashMapThreadIdStrorage;
+import ru.mipt.threadstrorage.ThreadsIdStorage;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.HashMap;
 
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
-/**
- *
- */
+
 public class ThreadedServer implements MessageListener {
 
-    //static Logger log = LoggerFactory.getLogger(ThreadedServer.class);
 
     public static final int PORT = 19000;
     private volatile boolean isRunning;
-    private Map<Long, ConnectionHandler> handlers = new HashMap<>();
-    private Map<Long,Long> threadIdStrorage = new HashMap<>();
-    private AtomicLong internalCounter = new AtomicLong(0);
+    private Map<Long, ConnectionHandler> handlers;
+    private ThreadsIdStorage threadIdStrorage;
+    private AtomicLong internalCounter;
     private ServerSocket sSocket;
+    private ChatStorage chatStorage;
     InputHandler inputHandler;
     SessionStorage sessions;
 
@@ -47,7 +50,6 @@ public class ThreadedServer implements MessageListener {
     }
 
     private Long getSessionIdByThread(ConnectionHandler handler) {
-        int threadId = handler
         return Long.valueOf(0);
     }
 
@@ -56,28 +58,30 @@ public class ThreadedServer implements MessageListener {
     }
 
     private void startServer() throws Exception {
-        //log.info("Started, waiting for connection");
 
         Map<String, Command> commands = new HashMap<>();
-
-
         HistoryStorage historyStorage= new BasedOnListStorage();
-
-
+        internalCounter = new AtomicLong(0);
+        handlers = new HashMap<>();
+        threadIdStrorage = new HashMapThreadIdStrorage();
+        sessions = new SessionStorage();
         UserStore userStore = new UserStore();
         AuthorizationService authService = new AuthorizationService(userStore);
+        chatStorage = new SimpleChatStorage();
 
-
-        Command loginCommand = new LoginCommand(authService);
+        Command loginCommand = new LoginCommand(authService, sessions);
+        Command registrationCommand = new RegistrationCommand(authService, sessions);
         Command helpCommand = new HelpCommand(commands);
         Command historyCommand = new HistoryCommand();
         Command userCommand = new UserCommand();
         Command findCommand = new FindCommand();
 
+
         commands.put("\\find", findCommand);
         commands.put("\\user", userCommand);
         commands.put("\\history", historyCommand);
         commands.put("\\login", loginCommand);
+        commands.put("\\registration", registrationCommand);
         commands.put("\\help", helpCommand);
 
 
@@ -89,12 +93,12 @@ public class ThreadedServer implements MessageListener {
 
             long sessionId = internalCounter.incrementAndGet();
             SocketConnectionHandler handler = new SocketConnectionHandler(socket);
+            handler.setSessionId(sessionId);
             handler.addListener(this);
 
             handlers.put(sessionId, handler);
             Thread thread = new Thread(handler);
-
-            threadIdStrorage.put(thread.getId(), sessionId);
+            threadIdStrorage.add(thread.getId(), sessionId);
 
             thread.start();
         }
@@ -107,41 +111,40 @@ public class ThreadedServer implements MessageListener {
         }
     }
 
+
+
     @Override
     public void onMessage(Message message) {
-        short messageType = message.getMessageType();
-        long rcvedSessionId = message.getSessionId();
-        //populate body of new sending message
-        Message sendedMessage = inputHandler.handle(message.getMessage(), sessions.getSessionById(rcvedSessionId));
+        long recivedSessionId = message.getSessionId();
+        //handle message
+
+        Long currentSessionId = threadIdStrorage.getSessionId(Thread.currentThread().getId());
+        //perfoem message
+        Message sendedMessage = inputHandler.handle(message, sessions.getSessionById(recivedSessionId),
+                        currentSessionId);
+
+        LinkedList<ConnectionHandler> handlerLinkedList = new LinkedList<>();
 
         //if no success in perfoming operation or message only to server
+        //sended back to client
+       if ((sendedMessage.getMessageType() != ReturnCode.SUCCESS) ||
+                (sendedMessage.getChatId() == SimpleChat.MESSAGE_ONLY_FOR_SERVER)) {
 
-
-        if ((sendedMessage.getMessageType() != ReturnCode.SUCCESS) ||
-                (sendedMessage.getChatId() == Chat.MESSAGE_ONLY_FOR_SERVER )) {
-            Long currentSessionId = threadIdStrorage.get(Thread.currentThread().getId());
             ConnectionHandler handler = handlers.get(currentSessionId);
-
-            //for login send sessionId
-            if (rcvedSessionId == ReturnCode.NO_CURRENT_SESSION) {
-                sendedMessage.setSessionId(currentSessionId);
+            handlerLinkedList.add(handler);
+       } else {
+            for (long userId : chatStorage.getChat(sendedMessage.getChatId()).getParticipantIds()) {
+                handlerLinkedList.add(handlers.get(sessions.getSessionIdByUserId(userId)));
             }
+        }
 
+        for (ConnectionHandler handler : handlerLinkedList) {
             try {
-                handler.send(sendedMessage);
+                handler.send(message);
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-
-        if (message.getChatId() == Chat.MESSAGE_ONLY_FOR_SERVER);
-            for (ConnectionHandler handler : handlers.values()) {
-                try {
-                    handler.send(message);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
 
     }
 

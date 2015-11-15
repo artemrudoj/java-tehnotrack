@@ -1,6 +1,6 @@
 package ru.mipt.threads;
 
-import ru.mipt.protocol.Message;
+import ru.mipt.message.Message;
 
 import java.io.IOException;
 

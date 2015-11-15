@@ -1,6 +1,6 @@
 package ru.mipt.threads;
 
-import ru.mipt.protocol.Message;
+import ru.mipt.message.Message;
 import ru.mipt.protocol.Protocol;
 
 import java.io.IOException;
@@ -19,17 +19,13 @@ import java.util.List;
  */
 public class SocketConnectionHandler implements ConnectionHandler {
 
-    //static Logger log = LoggerFactory.getLogger(SocketConnectionHandler.class);
 
-    // подписчики
     private List<MessageListener> listeners = new ArrayList<>();
-    private Socket socket;
     private InputStream in;
     private OutputStream out;
     private Long sessionId;
 
     public SocketConnectionHandler(Socket socket) throws IOException {
-        this.socket = socket;
         in = socket.getInputStream();
         out = socket.getOutputStream();
     }
@@ -40,12 +36,6 @@ public class SocketConnectionHandler implements ConnectionHandler {
 
     @Override
     public void send(Message msg) throws IOException {
-  /*      if (log.isDebugEnabled()) {
-            log.debug(msg.toString());
-        }*/
-
-        // TODO: здесь должен быть встроен алгоритм кодирования/декодирования сообщений
-        // то есть требуется описать протокол
         out.write(Protocol.encode(msg));
         out.flush();
     }
@@ -73,11 +63,9 @@ public class SocketConnectionHandler implements ConnectionHandler {
 
                     //log.info("message received: {}", msg);
 
-                    // Уведомим всех подписчиков этого события
                     notifyListeners(msg);
                 }
             } catch (Exception e) {
-                //log.error("Failed to handle connection: {}", e);
                 e.printStackTrace();
                 Thread.currentThread().interrupt();
             }
