@@ -1,16 +1,13 @@
 package ru.mipt.threadstrorage;
 
 import java.util.HashMap;
-import java.util.Map;
 
-/**
- * Created by artem on 15.11.15.
- */
+
 public class HashMapThreadIdStrorage implements ThreadsIdStorage {
     private HashMap<Long,Long> threadIdStrorage;
 
     public HashMapThreadIdStrorage() {
-        this.threadIdStrorage = new HashMap<Long, Long>();
+        this.threadIdStrorage = new HashMap<>();
     }
 
     @Override

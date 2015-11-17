@@ -1,7 +1,6 @@
 package ru.mipt.authorization;
 
 import ru.mipt.session.User;
-import java.util.Scanner;
 
 public class AuthorizationService {
 

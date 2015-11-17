@@ -4,11 +4,8 @@ import ru.mipt.message.ReturnCode;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicLong;
 
-/**
- * Created by artem on 29.10.15.
- */
+
 public class SessionStorage {
     // I suppose, that the most popular usage of this is geting element by id . ~o(1)
     Map<Long, Session> sessions = new HashMap<>();
