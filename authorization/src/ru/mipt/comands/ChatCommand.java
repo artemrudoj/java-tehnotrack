@@ -38,7 +38,7 @@ public class ChatCommand implements Command {
                     chats.append(id);
                     chats.append(" ");
                 }
-                return new ReturnCode(ReturnCode.SUCCESS, chats.toString());
+                return new ReturnCode(ReturnCode.SUCCESS, "avalible chats : " + chats.toString());
             }
         } else if (args[1].equals("create")) {
             //mnimum one id
@@ -56,7 +56,7 @@ public class ChatCommand implements Command {
                 //add himself to chat
                 chat.addParticipant(session.getSessionUser().getUserId());
                 Long chatId = chatStorage.addChat(chat);
-                return new ReturnCode(ReturnCode.SUCCESS, chatId.toString());
+                return new ReturnCode(ReturnCode.SUCCESS, "chat ID " + chatId.toString());
             } catch (NumberFormatException e) {
                     return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
                 }

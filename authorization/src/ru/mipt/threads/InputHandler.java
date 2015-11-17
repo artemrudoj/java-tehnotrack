@@ -46,24 +46,18 @@ public class InputHandler {
                 data = returnCode.getMsg();
 
                 assert(session != null);
-                //FIXME must be Message Type
-               // session.storeMessage(data);
             }
             else {
                 if (session != null) {
                     code = ReturnCode.COMMAND_NOT_FOUNDED;
-                    //FIXME
-                    //session.storeMessage(data, new Date().getTime());
                 } else {
-                    code = ReturnCode.NO_AUTHORIZE;
+                    code = ReturnCode.NO_CURRENT_SESSION;
                 }
             }
         } else {
             //check is it simple message
             if (session != null) {
                 code = ReturnCode.SUCCESS;
-                //FIXME
-                //session.storeMessage(data, new Date().getTime());
             }
             else {
                 code = ReturnCode.NO_AUTHORIZE;

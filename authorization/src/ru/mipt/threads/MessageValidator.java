@@ -3,6 +3,7 @@ package ru.mipt.threads;
 import ru.mipt.chat.Chat;
 import ru.mipt.comands.CommandType;
 import ru.mipt.message.Message;
+import ru.mipt.message.ReturnCode;
 
 import java.util.HashMap;
 
@@ -69,5 +70,24 @@ public class MessageValidator {
         message.setSessionId(sessionId);
         message.setSenderId(userId);
         return message;
+    }
+
+    String messageDecarator(Message msg) {
+        StringBuilder builder = new StringBuilder();
+        if (msg.getChatId() == Chat.MESSAGE_ONLY_FOR_SERVER) {
+            builder.append("[server]: ");
+            builder.append(ReturnCode.getReturnCodeInfo(msg.getReturnCode()));
+        } else {
+            builder.append("[chat ID ")
+                    .append(Long.toString(msg.getChatId()))
+                    .append("]: ")
+                    .append("[user ID ")
+                    .append(Long.toString(msg.getSenderId()))
+                    .append("]: ");
+
+        }
+        if (msg.getMessage() != null)
+            builder.append(msg.getMessage());
+        return builder.toString();
     }
 }

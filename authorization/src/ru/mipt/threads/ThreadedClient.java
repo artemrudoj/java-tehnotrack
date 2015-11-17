@@ -62,15 +62,15 @@ public class ThreadedClient implements MessageListener {
                     assert (tokens.length == 3);
                     user = new User(tokens[0], tokens[1], Long.parseLong(tokens[2]));
                     sessionId = msg.getSessionId();
-                    System.out.printf("%s\n", ReturnCode.getReturnCodeInfo(msg.getReturnCode()));
-                    return;
+                    break;
                 }
-                System.out.printf("%s\n", ReturnCode.getReturnCodeInfo(msg.getReturnCode()));
                 break;
-            default:
-                System.out.printf("%s\n", ReturnCode.getReturnCodeInfo(msg.getReturnCode()) + msg.getMessage());
         }
+        System.out.printf("%s\n", validator.messageDecarator(msg));
+
     }
+
+
 
 
     public static void main(String[] args) throws Exception{
