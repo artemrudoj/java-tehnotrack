@@ -2,9 +2,11 @@ package ru.mipt.session;
 
 
 public class User {
+    public static final int NO_USER_ID = -1;
     private String name;
     private String pass;
     private String nick;
+    long userId;
 
     public String getNick() {
         return nick;
@@ -45,5 +47,13 @@ public class User {
         str.append("\npassword = ");
         str.append(pass);
         return str.toString();
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 }

@@ -36,7 +36,7 @@ public class LoginCommand implements Command {
                 session = new Session(new BasedOnListStorage());
                 session.setSessionUser(user);
                 sessionStorage.addSession(session, possibleSessionId);
-                return new ReturnCode(ReturnCode.SUCCESS);
+                return new ReturnCode(ReturnCode.SUCCESS, args[1] + " " + args[2]);
             default:
                 return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         }

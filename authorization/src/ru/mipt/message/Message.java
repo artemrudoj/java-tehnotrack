@@ -11,12 +11,13 @@ public class Message  implements Serializable {
     long time;
     long senderId;
     long chatId;
-    short messageType;
+    short returnCode;
+    short type;
     long messageId;
     String message;
 
-    public Message(short messageType, String message, long time) {
-        this.messageType = messageType;
+    public Message(short returnCode, String message, long time) {
+        this.returnCode = returnCode;
         this.message = message;
         this.time = time;
     }
@@ -26,7 +27,7 @@ public class Message  implements Serializable {
     }
 
     public Message(short returnCode) {
-        messageType = returnCode;
+        this.returnCode = returnCode;
     }
 
     public long getChatId() {
@@ -53,12 +54,12 @@ public class Message  implements Serializable {
         this.message = message;
     }
 
-    public short getMessageType() {
-        return messageType;
+    public short getReturnCode() {
+        return returnCode;
     }
 
-    public void setMessageType(short messageType) {
-        this.messageType = messageType;
+    public void setReturnCode(short returnCode) {
+        this.returnCode = returnCode;
     }
 
     public long getSessionId() {
@@ -83,6 +84,14 @@ public class Message  implements Serializable {
 
     public void setMessageId(long messageId) {
         this.messageId = messageId;
+    }
+
+    public short getType() {
+        return type;
+    }
+
+    public void setType(short type) {
+        this.type = type;
     }
 }
 

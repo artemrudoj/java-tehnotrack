@@ -74,7 +74,7 @@ public class InputHandler {
     }
 
     void wrapMessage(Message message, short code, long time, String msg){
-        message.setMessageType(code);
+        message.setReturnCode(code);
         message.setTime(time);
         message.setMessage(msg);
     }

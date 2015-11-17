@@ -10,7 +10,7 @@ import ru.mipt.hisorystorage.BasedOnListStorage;
 import ru.mipt.hisorystorage.HistoryStorage;
 import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
-import ru.mipt.chat.SimpleChat;
+import ru.mipt.chat.Chat;
 import ru.mipt.chat.ChatStorage;
 import ru.mipt.session.SessionStorage;
 import ru.mipt.threadstrorage.HashMapThreadIdStrorage;
@@ -38,6 +38,7 @@ public class ThreadedServer implements MessageListener {
     private ChatStorage chatStorage;
     InputHandler inputHandler;
     SessionStorage sessions;
+    MessageValidator validator;
 
     public ThreadedServer() {
         try {
@@ -68,14 +69,14 @@ public class ThreadedServer implements MessageListener {
         UserStore userStore = new UserStore();
         AuthorizationService authService = new AuthorizationService(userStore);
         chatStorage = new SimpleChatStorage();
-
+        validator = new MessageValidator();
         Command loginCommand = new LoginCommand(authService, sessions);
         Command registrationCommand = new RegistrationCommand(authService, sessions);
         Command helpCommand = new HelpCommand(commands);
         Command historyCommand = new HistoryCommand();
         Command userCommand = new UserCommand();
         Command findCommand = new FindCommand();
-
+        Command chatCommand = new ChatCommand(chatStorage);
 
         commands.put("\\find", findCommand);
         commands.put("\\user", userCommand);
@@ -83,6 +84,8 @@ public class ThreadedServer implements MessageListener {
         commands.put("\\login", loginCommand);
         commands.put("\\registration", registrationCommand);
         commands.put("\\help", helpCommand);
+        commands.put("\\chat", chatCommand);
+
 
 
         inputHandler = new InputHandler(commands);
@@ -127,8 +130,8 @@ public class ThreadedServer implements MessageListener {
 
         //if no success in perfoming operation or message only to server
         //sended back to client
-       if ((sendedMessage.getMessageType() != ReturnCode.SUCCESS) ||
-                (sendedMessage.getChatId() == SimpleChat.MESSAGE_ONLY_FOR_SERVER)) {
+       if ((sendedMessage.getReturnCode() != ReturnCode.SUCCESS) ||
+                (sendedMessage.getChatId() == Chat.MESSAGE_ONLY_FOR_SERVER)) {
 
             ConnectionHandler handler = handlers.get(currentSessionId);
             handlerLinkedList.add(handler);
