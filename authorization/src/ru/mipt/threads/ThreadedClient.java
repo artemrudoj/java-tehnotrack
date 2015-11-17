@@ -59,8 +59,8 @@ public class ThreadedClient implements MessageListener {
                 if (msg.getReturnCode() == ReturnCode.SUCCESS) {
                     assert (msg != null);
                     String[] tokens = msg.getMessage().split(" ");
-                    assert (tokens.length == 2);
-                    user = new User(tokens[0], tokens[1]);
+                    assert (tokens.length == 3);
+                    user = new User(tokens[0], tokens[1], Long.parseLong(tokens[2]));
                     sessionId = msg.getSessionId();
                     System.out.printf("%s\n", ReturnCode.getReturnCodeInfo(msg.getReturnCode()));
                     return;

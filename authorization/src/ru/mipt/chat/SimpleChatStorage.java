@@ -42,6 +42,18 @@ public class SimpleChatStorage implements ChatStorage {
     }
 
     @Override
+    public boolean isChatExist(long userId, long chatId) {
+        Chat chat = getChat(chatId);
+        if (chat == null)
+            return false;
+        for (long id : chat.getParticipantIds()) {
+            if (id == userId)
+                return true;
+        }
+        return false;
+    }
+
+    @Override
     public long addChat(Chat chat) {
         long chatId = internalCounter.incrementAndGet();
         chatHashMap.put(chatId, (Chat)chat);

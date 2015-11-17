@@ -1,5 +1,6 @@
 package ru.mipt.comands;
 
+import ru.mipt.authorization.UserStore;
 import ru.mipt.chat.Chat;
 import ru.mipt.chat.ChatStorage;
 import ru.mipt.message.ReturnCode;
@@ -13,9 +14,11 @@ import java.util.LinkedList;
 public class ChatCommand implements Command {
 
     ChatStorage chatStorage;
+    UserStore userStore;
 
-    public ChatCommand(ChatStorage chatStorage) {
+    public ChatCommand(ChatStorage chatStorage, UserStore userStore) {
         this.chatStorage = chatStorage;
+        this.userStore = userStore;
     }
 
     @Override
@@ -39,22 +42,43 @@ public class ChatCommand implements Command {
             }
         } else if (args[1].equals("create")) {
             //mnimum one id
-            if (args[2] == null)
+            if (args.length < 3)
                 return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
             try {
                 Chat chat = new Chat();
                 for ( int i = 2; i < args.length; i++) {
-                    chat.addParticipant(Long.parseLong(args[i]));
+                    Long userId = Long.parseLong(args[i]);
+                    if(userStore.isUserExist(userId))
+                        chat.addParticipant(userId);
+                    else
+                        return new ReturnCode(ReturnCode.USER_NOT_EXIST, userId.toString());
                 }
+                //add himself to chat
+                chat.addParticipant(session.getSessionUser().getUserId());
                 Long chatId = chatStorage.addChat(chat);
                 return new ReturnCode(ReturnCode.SUCCESS, chatId.toString());
             } catch (NumberFormatException e) {
                     return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
                 }
         } else if (args[1].equals("send")) {
-            if (args[2] == null)
+            if (args.length < 3)
                 return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
-            return new ReturnCode(ReturnCode.SUCCESS);
+            else {
+                    try {
+                        if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2])))
+                            return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
+                        StringBuilder builder = new StringBuilder();
+                        for (int i = 3; i < args.length; i++) {
+                            if (builder.length() > 0) {
+                                builder.append(" ");
+                            }
+                            builder.append(args[i]);
+                        }
+                        return new ReturnCode(ReturnCode.SUCCESS, builder.toString());
+                    } catch (NumberFormatException e) {
+                        return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
+                    }
+                }
         } else
             return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
     }

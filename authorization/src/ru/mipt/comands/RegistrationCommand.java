@@ -27,9 +27,9 @@ public class RegistrationCommand implements Command {
             return new ReturnCode(ReturnCode.SESSION_ALREADY_HAVE_USER);
         switch (args.length) {
             case 3:
-                User user = service.createUser(args[1], args[2]);
-                if (user == null)
-                    return new ReturnCode(ReturnCode.USER_NOT_EXIST);
+                Long userId = service.createUser(args[1], args[2]);
+                if (userId == null)
+                    return new ReturnCode(ReturnCode.USER_ALREADY_EXIST);
                 return new ReturnCode(ReturnCode.SUCCESS);
             default:
                 return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);

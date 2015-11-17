@@ -5,7 +5,6 @@ package ru.mipt.message;
  */
 public class ReturnCode {
     public static final short NO_CURRENT_SESSION = -1;
-    public static final short SIMPLE_MESSAGE = 0;
     public static final short SUCCESS = 1;
     public static final short SESSION_ALREADY_HAVE_USER = 2;
     public static final short USER_ALREADY_EXIST = 3;
@@ -15,6 +14,7 @@ public class ReturnCode {
     public static final short COMMAND_TO_SERVER = 7;
     public static final short INCORRECT_LOGIN_OR_PASSWORD = 8;
     public static final short NO_AUTHORIZE = 9;
+    public static final short CHAT_IS_NOT_EXIST = 10;
 
     public short getReturnCode() {
         return returnCode;
@@ -66,6 +66,8 @@ public class ReturnCode {
                 return "INCORRECT_LOGIN_OR_PASSWORD ";
             case ReturnCode.NO_AUTHORIZE:
                 return "NO_AUTHORIZE ";
+            case ReturnCode.CHAT_IS_NOT_EXIST:
+                return "CHAT_IS_NOT_EXIST ";
             default:
                 return "NO ERROR INFO ";
         }

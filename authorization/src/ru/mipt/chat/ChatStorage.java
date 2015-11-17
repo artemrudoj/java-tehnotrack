@@ -9,4 +9,5 @@ public interface ChatStorage {
     long addChat(Chat chat);
     Chat getChat(long id);
     LinkedList<Long> getChatsForUser(long userId);
+    boolean isChatExist(long userId, long charId);
 }

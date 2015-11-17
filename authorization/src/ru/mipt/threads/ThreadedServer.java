@@ -36,6 +36,7 @@ public class ThreadedServer implements MessageListener {
     private AtomicLong internalCounter;
     private ServerSocket sSocket;
     private ChatStorage chatStorage;
+    private UserStore userStore;
     InputHandler inputHandler;
     SessionStorage sessions;
     MessageValidator validator;
@@ -66,7 +67,7 @@ public class ThreadedServer implements MessageListener {
         handlers = new HashMap<>();
         threadIdStrorage = new HashMapThreadIdStrorage();
         sessions = new SessionStorage();
-        UserStore userStore = new UserStore();
+        userStore = new UserStore();
         AuthorizationService authService = new AuthorizationService(userStore);
         chatStorage = new SimpleChatStorage();
         validator = new MessageValidator();
@@ -76,7 +77,7 @@ public class ThreadedServer implements MessageListener {
         Command historyCommand = new HistoryCommand();
         Command userCommand = new UserCommand();
         Command findCommand = new FindCommand();
-        Command chatCommand = new ChatCommand(chatStorage);
+        Command chatCommand = new ChatCommand(chatStorage, userStore);
 
         commands.put("\\find", findCommand);
         commands.put("\\user", userCommand);
@@ -136,14 +137,20 @@ public class ThreadedServer implements MessageListener {
             ConnectionHandler handler = handlers.get(currentSessionId);
             handlerLinkedList.add(handler);
        } else {
-            for (long userId : chatStorage.getChat(sendedMessage.getChatId()).getParticipantIds()) {
-                handlerLinkedList.add(handlers.get(sessions.getSessionIdByUserId(userId)));
+            LinkedList<Long> participants = chatStorage.getChat(sendedMessage.getChatId()).getParticipantIds();
+            for (long userId : participants) {
+                if (userId == sendedMessage.getSenderId())
+                    continue;
+                ConnectionHandler handler;
+                handler = handlers.get(sessions.getSessionIdByUserId(userId));
+                if (handler != null)
+                    handlerLinkedList.add(handler);
             }
         }
 
         for (ConnectionHandler handler : handlerLinkedList) {
             try {
-                handler.send(message);
+                handler.send(sendedMessage);
             } catch (IOException e) {
                 e.printStackTrace();
             }

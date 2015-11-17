@@ -23,6 +23,7 @@ public class SessionStorage {
 
     public void addSession(Session session, long sessionId){
         sessions.put(sessionId, session);
+        userToSessionMatch.put(session.getSessionUser().getUserId(), sessionId);
     }
 
     public Long getSessionIdByUserId(Long userId) {

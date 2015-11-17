@@ -15,7 +15,7 @@ public class AuthorizationService {
         return userStore.getUser(name, password);
     }
 
-    public User createUser(String name, String password) {
+    public Long createUser(String name, String password) {
         if (userStore.isUserExist(name)) {
             return null;
         }
