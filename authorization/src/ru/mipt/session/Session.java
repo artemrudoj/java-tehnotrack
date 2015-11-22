@@ -1,12 +1,12 @@
 package ru.mipt.session;
 
-import ru.mipt.hisorystorage.HistoryStorage;
+import ru.mipt.messagestore.MessageStore;
 
 
 public class Session {
 
     private User sessionUser;
-    private HistoryStorage historyStorage;
+    private MessageStore messageStore;
     private int sessionId;
 
     public int getSessionId() {
@@ -17,8 +17,8 @@ public class Session {
         this.sessionId = sessionId;
     }
 
-    public Session(HistoryStorage storage) {
-        historyStorage = storage;
+    public Session(MessageStore storage) {
+        messageStore = storage;
     }
 
     public User getSessionUser() {
@@ -31,17 +31,7 @@ public class Session {
 
     public boolean isSeesionExist() { return sessionUser != null; }
 
-    public HistoryStorage getHistoryStorage() {
-        return historyStorage;
-    }
-
-    public void setHistoryStorage(HistoryStorage historyStorage) {
-        this.historyStorage = historyStorage;
-    }
-
-    public void storeMessage(String msg) {
-        if (isSeesionExist()) {
-            historyStorage.addMessage(msg);
-        }
+    public MessageStore getMessageStore() {
+        return messageStore;
     }
 }

@@ -36,7 +36,7 @@ public class UserStore {
         return null;
     }
 
-    User findUserById(Long id) {
+    public User findUserById(Long id) {
         if (id != null) {
             for (User user : users) {
                 if (id == user.getUserId()) {

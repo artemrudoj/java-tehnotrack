@@ -6,8 +6,8 @@ import ru.mipt.authorization.AuthorizationService;
 import ru.mipt.authorization.UserStore;
 import ru.mipt.chat.SimpleChatStorage;
 import ru.mipt.comands.*;
-import ru.mipt.hisorystorage.BasedOnListStorage;
-import ru.mipt.hisorystorage.HistoryStorage;
+import ru.mipt.messagestore.BasedOnListStorage;
+import ru.mipt.messagestore.MessageStore;
 import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
 import ru.mipt.chat.Chat;
@@ -37,9 +37,9 @@ public class ThreadedServer implements MessageListener {
     private ServerSocket sSocket;
     private ChatStorage chatStorage;
     private UserStore userStore;
+    private MessageStore messageStore;
     InputHandler inputHandler;
     SessionStorage sessions;
-    MessageValidator validator;
 
     public ThreadedServer() {
         try {
@@ -62,26 +62,22 @@ public class ThreadedServer implements MessageListener {
     private void startServer() throws Exception {
 
         Map<String, Command> commands = new HashMap<>();
-        HistoryStorage historyStorage= new BasedOnListStorage();
+        MessageStore messageStore = new BasedOnListStorage();
         internalCounter = new AtomicLong(0);
         handlers = new HashMap<>();
         threadIdStrorage = new HashMapThreadIdStrorage();
         sessions = new SessionStorage();
         userStore = new UserStore();
+        messageStore = new BasedOnListStorage();
         AuthorizationService authService = new AuthorizationService(userStore);
         chatStorage = new SimpleChatStorage();
-        validator = new MessageValidator();
         Command loginCommand = new LoginCommand(authService, sessions);
-        Command registrationCommand = new RegistrationCommand(authService, sessions);
+        Command registrationCommand = new RegistrationCommand(authService);
         Command helpCommand = new HelpCommand(commands);
-        Command historyCommand = new HistoryCommand();
-        Command userCommand = new UserCommand();
-        Command findCommand = new FindCommand();
-        Command chatCommand = new ChatCommand(chatStorage, userStore);
+        Command userCommand = new UserCommand(userStore);
+        Command chatCommand = new ChatCommand(chatStorage, userStore, messageStore);
 
-        commands.put("\\find", findCommand);
         commands.put("\\user", userCommand);
-        commands.put("\\history", historyCommand);
         commands.put("\\login", loginCommand);
         commands.put("\\registration", registrationCommand);
         commands.put("\\help", helpCommand);

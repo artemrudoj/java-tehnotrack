@@ -1,6 +1,7 @@
 package ru.mipt.comands;
 
 
+import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
 import ru.mipt.session.Session;
 
@@ -21,5 +22,5 @@ public interface Command {
      *
      * В качестве пример оставлю void
      */
-    ReturnCode execute(Session session, String[] args);
+    ReturnCode execute(Session session, Message message);
 }

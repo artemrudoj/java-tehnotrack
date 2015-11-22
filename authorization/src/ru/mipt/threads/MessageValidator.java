@@ -4,6 +4,7 @@ import ru.mipt.chat.Chat;
 import ru.mipt.comands.CommandType;
 import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
+import ru.mipt.protocol.CommandId;
 
 import java.util.HashMap;
 
@@ -13,11 +14,10 @@ import java.util.HashMap;
 public class MessageValidator {
     HashMap<String, Short> commands;
 
+
     public MessageValidator() {
         commands = new HashMap<>();
-        commands.put("\\find", CommandType.FIND);
         commands.put("\\user", CommandType.USER);
-        commands.put("\\history", CommandType.HISTORY);
         commands.put("\\login", CommandType.LOGIN);
         commands.put("\\registration", CommandType.REGISTRATION);
         commands.put("\\help", CommandType.HELP);
@@ -76,18 +76,26 @@ public class MessageValidator {
         StringBuilder builder = new StringBuilder();
         if (msg.getChatId() == Chat.MESSAGE_ONLY_FOR_SERVER) {
             builder.append("[server]: ");
-            builder.append(ReturnCode.getReturnCodeInfo(msg.getReturnCode()));
+            builder.append(ReturnCode.getReturnCodeInfo(msg.getReturnCode())).append('\n');
         } else {
-            builder.append("[chat ID ")
-                    .append(Long.toString(msg.getChatId()))
-                    .append("]: ")
-                    .append("[user ID ")
-                    .append(Long.toString(msg.getSenderId()))
-                    .append("]: ");
+            if (msg.getReturnCode() == ReturnCode.SUCCESS) {
+                builder.append("[chat ID ")
+                        .append(Long.toString(msg.getChatId()))
+                        .append("]: ")
+                        .append("[user ID ")
+                        .append(Long.toString(msg.getSenderId()))
+                        .append("]: ");
 
+            }
         }
         if (msg.getMessage() != null)
             builder.append(msg.getMessage());
         return builder.toString();
     }
+
+    boolean isValidMessageType(int messageType) {
+        return ((messageType <= CommandType.LAST_REGISTERD_COMMAND) &&
+                (messageType >= CommandType.FIRST_REGISTRED_COMMAND));
+    }
+
 }

@@ -1,8 +1,10 @@
 package ru.mipt.comands;
 
+import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
 import ru.mipt.session.Session;
 
+import java.lang.reflect.Member;
 import java.util.Map;
 
 
@@ -19,7 +21,8 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public ReturnCode execute(Session session, String[] args) {
+    public ReturnCode execute(Session session, Message message) {
+        String args[] = message.getMessage().split(" ");
         System.out.println("Executing help");
         /*
         В простом случае просто выводим данные на консоль

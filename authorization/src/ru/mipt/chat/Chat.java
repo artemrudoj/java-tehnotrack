@@ -1,7 +1,9 @@
 package ru.mipt.chat;
 
 import ru.mipt.message.Message;
+import ru.mipt.messagestore.MessageStore;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -9,7 +11,6 @@ import java.util.LinkedList;
  */
 public class Chat {
     public static final int MESSAGE_ONLY_FOR_SERVER = -1;
-    LinkedList<Message> messagesStore;
     long chatId;
     LinkedList<Long> messages;
     LinkedList<Long> participantIds;
@@ -18,11 +19,9 @@ public class Chat {
     public Chat() {
         messages = new LinkedList<>();
         participantIds = new LinkedList<>();
-        messagesStore = new LinkedList<>();
     }
 
     public void addMessage(Message message) {
-        messagesStore.add(message);
         messages.add(message.getMessageId());
     }
 
@@ -38,6 +37,31 @@ public class Chat {
         return messages;
     }
 
+    public ArrayList<Message> getMessages(MessageStore messageStore) {
+        ArrayList<Message> messagesFromHistrory = new ArrayList<>();
+        for (long id : messages) {
+            Message message = messageStore.getMessageById(id);
+            assert (message != null);
+            messagesFromHistrory.add(message);
+        }
+        return messagesFromHistrory;
+    }
+
+
+    public ArrayList<Message> findMessage(String msg, MessageStore messageStore) {
+        ArrayList<Message> findedMessages = new ArrayList<Message>();
+        ArrayList<Message> messagesOfChat = getMessages(messageStore);
+        for (Message currentMsg : messagesOfChat) {
+            for (String data : currentMsg.getMessage().split(" ")) {
+                if (msg.equals(data)) {
+                    findedMessages.add(currentMsg);
+                    break;
+                }
+            }
+        }
+        return findedMessages;
+    }
+
     public long getChatId() {
         return chatId;
     }
@@ -49,7 +73,5 @@ public class Chat {
     public void setAdmin(long admin) {
     }
 
-    public LinkedList<Message> getMessagesStore() {
-        return messagesStore;
-    }
+
 }

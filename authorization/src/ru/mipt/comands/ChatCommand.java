@@ -3,9 +3,13 @@ package ru.mipt.comands;
 import ru.mipt.authorization.UserStore;
 import ru.mipt.chat.Chat;
 import ru.mipt.chat.ChatStorage;
+import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
+import ru.mipt.messagestore.MessageStore;
 import ru.mipt.session.Session;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 
 /**
@@ -15,16 +19,21 @@ public class ChatCommand implements Command {
 
     ChatStorage chatStorage;
     UserStore userStore;
+    MessageStore messageStore;
 
-    public ChatCommand(ChatStorage chatStorage, UserStore userStore) {
+    public ChatCommand(ChatStorage chatStorage, UserStore userStore, MessageStore messageStore) {
         this.chatStorage = chatStorage;
         this.userStore = userStore;
+        this.messageStore = messageStore;
     }
 
     @Override
-    public ReturnCode execute(Session session, String[] args) {
+    public ReturnCode execute(Session session, Message message) {
+
+
         if (session == null)
             return new ReturnCode(ReturnCode.NO_CURRENT_SESSION);
+        String args[] = message.getMessage().split(" ");
         if (args[1] == null)
             return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         if (args[1].equals("list")) {
@@ -61,24 +70,72 @@ public class ChatCommand implements Command {
                     return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
                 }
         } else if (args[1].equals("send")) {
-            if (args.length < 3)
+            if (args.length < 3) {
+                message.setChatId(Chat.MESSAGE_ONLY_FOR_SERVER);
                 return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
+            }
             else {
-                    try {
-                        if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2])))
-                            return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
-                        StringBuilder builder = new StringBuilder();
-                        for (int i = 3; i < args.length; i++) {
-                            if (builder.length() > 0) {
-                                builder.append(" ");
-                            }
-                            builder.append(args[i]);
-                        }
-                        return new ReturnCode(ReturnCode.SUCCESS, builder.toString());
-                    } catch (NumberFormatException e) {
-                        return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
+                try {
+                    if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2]))) {
+                        message.setChatId(Chat.MESSAGE_ONLY_FOR_SERVER);
+                        return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
                     }
+                    Chat chat = chatStorage.getChat(Long.parseLong(args[2]));
+                    assert (chat != null);
+                    StringBuilder builder = new StringBuilder();
+                    for (int i = 3; i < args.length; i++) {
+                        if (builder.length() > 0) {
+                            builder.append(" ");
+                        }
+                        builder.append(args[i]);
+                    }
+                    long messageId = messageStore.addMessage(message);
+                    message.setMessageId(messageId);
+                    chat.addMessage(message);
+                    return new ReturnCode(ReturnCode.SUCCESS, builder.toString());
+                } catch (NumberFormatException e) {
+                    message.setChatId(Chat.MESSAGE_ONLY_FOR_SERVER);
+                    return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
                 }
+            }
+        } else if (args[1].equals("history")) {
+            if (args.length != 3)
+                return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
+            try {
+                if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2])))
+                    return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
+                Chat chat = chatStorage.getChat(Long.parseLong(args[2]));
+                assert (chat != null);
+                ArrayList<Message> messages = chat.getMessages(messageStore);
+                StringBuilder builder = new StringBuilder();
+                for (Message msg : messages) {
+                    String formatMessage = String.format("[chat id = %d ] : [user id = %d]:%s\n", msg.getChatId(), msg.getSenderId(), msg.getMessage());
+                    builder.append(formatMessage);
+                }
+                return new ReturnCode(ReturnCode.SUCCESS, builder.toString());
+            } catch (NumberFormatException e) {
+                return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
+            }
+        } else if (args[1].equals("find")) {
+            if (args.length != 4)
+                return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
+            try {
+                if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2])))
+                    return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
+                Chat chat = chatStorage.getChat(Long.parseLong(args[2]));
+                assert (chat != null);
+                ArrayList<Message> messages = chat.findMessage(args[3], messageStore);
+                StringBuilder builder = new StringBuilder();
+                for (Message msg : messages) {
+                    String formatMessage = String.format("[chat id = %d ] : [user id = %d]:%s\n", msg.getChatId(), msg.getSenderId(), msg.getMessage());
+                    builder.append(formatMessage);
+                }
+                if (messages == null)
+                    builder.append("Nothind is found\n");
+                return new ReturnCode(ReturnCode.SUCCESS, builder.toString());
+            } catch (NumberFormatException e) {
+                return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
+            }
         } else
             return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
     }

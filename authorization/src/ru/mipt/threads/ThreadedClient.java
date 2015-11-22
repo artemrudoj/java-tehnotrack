@@ -53,7 +53,8 @@ public class ThreadedClient implements MessageListener {
     public void onMessage(Message msg) {
         switch (msg.getType()) {
             case CommandType.SIMPLE_MESSAGE:
-                System.out.printf("[chat id = %d ] : [user id = %d]:%s\n", msg.getChatId(), msg.getSenderId(), msg.getMessage());
+                if( msg.getReturnCode() == ReturnCode.SUCCESS)
+                    System.out.printf("[chat id = %d ] : [user id = %d]:%s\n", msg.getChatId(), msg.getSenderId(), msg.getMessage());
                 break;
             case CommandType.LOGIN:
                 if (msg.getReturnCode() == ReturnCode.SUCCESS) {
