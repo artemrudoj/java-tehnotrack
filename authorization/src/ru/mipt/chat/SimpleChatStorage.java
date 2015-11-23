@@ -1,6 +1,7 @@
 package ru.mipt.chat;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -21,16 +22,9 @@ public class SimpleChatStorage implements ChatStorage {
         internalCounter = new AtomicLong(0);
     }
 
-
     @Override
-    public Chat getChat(long id) {
-        return chatHashMap.get(id);
-    }
-
-
-    @Override
-    public LinkedList<Long> getChatsForUser(long userId) {
-        LinkedList<Long> chats = new LinkedList<>();
+    public ArrayList<Long> getChatsForUser(long userId) {
+        ArrayList<Long> chats = new ArrayList<>();
         for (Map.Entry<Long, Chat> entry : chatHashMap.entrySet()) {
             Chat chat = entry.getValue();
             LinkedList<Long> usersId = chat.getParticipantIds();
@@ -43,14 +37,19 @@ public class SimpleChatStorage implements ChatStorage {
 
     @Override
     public boolean isChatExist(long userId, long chatId) {
-        Chat chat = getChat(chatId);
-        if (chat == null)
-            return false;
-        for (long id : chat.getParticipantIds()) {
-            if (id == userId)
-                return true;
-        }
+//        Chat chat = getChat(chatId);
+//        if (chat == null)
+//            return false;
+//        for (long id : chat.getParticipantIds()) {
+//            if (id == userId)
+//                return true;
+//        }
         return false;
+    }
+
+    @Override
+    public ArrayList<Long> getParticipantIds(long chatId) {
+        return null;
     }
 
     @Override

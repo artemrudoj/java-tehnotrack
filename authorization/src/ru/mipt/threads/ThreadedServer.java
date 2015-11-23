@@ -4,9 +4,11 @@ package ru.mipt.threads;
 
 import ru.mipt.authorization.AuthorizationService;
 import ru.mipt.authorization.UserStore;
+import ru.mipt.chat.DataBaseChatStorage;
 import ru.mipt.chat.SimpleChatStorage;
 import ru.mipt.comands.*;
 import ru.mipt.messagestore.BasedOnListStorage;
+import ru.mipt.messagestore.DataBaseMessageStore;
 import ru.mipt.messagestore.MessageStore;
 import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
@@ -15,10 +17,11 @@ import ru.mipt.chat.ChatStorage;
 import ru.mipt.session.SessionStorage;
 import ru.mipt.threadstrorage.HashMapThreadIdStrorage;
 import ru.mipt.threadstrorage.ThreadsIdStorage;
-
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import java.util.LinkedList;
@@ -41,7 +44,29 @@ public class ThreadedServer implements MessageListener {
     InputHandler inputHandler;
     SessionStorage sessions;
 
+    public ComboPooledDataSource getConnectionPool() {
+        return connectionPool;
+    }
+
+    private ComboPooledDataSource connectionPool;
+
+
     public ThreadedServer() {
+        try {
+            Class.forName("org.postgresql.Driver");
+            connectionPool = new ComboPooledDataSource();
+            connectionPool.setDriverClass("org.postgresql.Driver"); //loads the jdbc driver
+            connectionPool.setJdbcUrl("jdbc:postgresql://178.62.140.149:5432/artemrudoj");
+            connectionPool.setUser("senthil");
+            connectionPool.setPassword("ubuntu");
+            connectionPool.setMinPoolSize(5);
+            connectionPool.setAcquireIncrement(5);
+            connectionPool.setMaxPoolSize(20);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         try {
             sSocket = new ServerSocket(PORT);
             sSocket.setReuseAddress(true);
@@ -62,15 +87,19 @@ public class ThreadedServer implements MessageListener {
     private void startServer() throws Exception {
 
         Map<String, Command> commands = new HashMap<>();
-        MessageStore messageStore = new BasedOnListStorage();
         internalCounter = new AtomicLong(0);
         handlers = new HashMap<>();
         threadIdStrorage = new HashMapThreadIdStrorage();
         sessions = new SessionStorage();
         userStore = new UserStore();
-        messageStore = new BasedOnListStorage();
+
         AuthorizationService authService = new AuthorizationService(userStore);
-        chatStorage = new SimpleChatStorage();
+
+        //chatStorage = new SimpleChatStorage();
+        //messageStore = new BasedOnListStorage();
+        chatStorage = new DataBaseChatStorage(connectionPool);
+        messageStore = new DataBaseMessageStore(connectionPool);
+
         Command loginCommand = new LoginCommand(authService, sessions);
         Command registrationCommand = new RegistrationCommand(authService);
         Command helpCommand = new HelpCommand(commands);
@@ -133,7 +162,7 @@ public class ThreadedServer implements MessageListener {
             ConnectionHandler handler = handlers.get(currentSessionId);
             handlerLinkedList.add(handler);
        } else {
-            LinkedList<Long> participants = chatStorage.getChat(sendedMessage.getChatId()).getParticipantIds();
+            ArrayList<Long> participants = chatStorage.getParticipantIds(sendedMessage.getChatId());
             for (long userId : participants) {
                 if (userId == sendedMessage.getSenderId())
                     continue;

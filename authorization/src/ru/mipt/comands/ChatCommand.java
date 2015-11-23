@@ -38,7 +38,7 @@ public class ChatCommand implements Command {
             return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         if (args[1].equals("list")) {
             long userId = session.getSessionUser().getUserId();
-            LinkedList<Long> chatIds = chatStorage.getChatsForUser(userId);
+            ArrayList<Long> chatIds = chatStorage.getChatsForUser(userId);
             if (chatIds == null)
                 return new ReturnCode(ReturnCode.SUCCESS, "chats not found");
             else {
@@ -80,8 +80,6 @@ public class ChatCommand implements Command {
                         message.setChatId(Chat.MESSAGE_ONLY_FOR_SERVER);
                         return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
                     }
-                    Chat chat = chatStorage.getChat(Long.parseLong(args[2]));
-                    assert (chat != null);
                     StringBuilder builder = new StringBuilder();
                     for (int i = 3; i < args.length; i++) {
                         if (builder.length() > 0) {
@@ -89,9 +87,7 @@ public class ChatCommand implements Command {
                         }
                         builder.append(args[i]);
                     }
-                    long messageId = messageStore.addMessage(message);
-                    message.setMessageId(messageId);
-                    chat.addMessage(message);
+                    messageStore.addMessage(message);
                     return new ReturnCode(ReturnCode.SUCCESS, builder.toString());
                 } catch (NumberFormatException e) {
                     message.setChatId(Chat.MESSAGE_ONLY_FOR_SERVER);
@@ -104,9 +100,7 @@ public class ChatCommand implements Command {
             try {
                 if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2])))
                     return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
-                Chat chat = chatStorage.getChat(Long.parseLong(args[2]));
-                assert (chat != null);
-                ArrayList<Message> messages = chat.getMessages(messageStore);
+                ArrayList<Message> messages = messageStore.getMessages(message.getChatId());
                 StringBuilder builder = new StringBuilder();
                 for (Message msg : messages) {
                     String formatMessage = String.format("[chat id = %d ] : [user id = %d]:%s\n", msg.getChatId(), msg.getSenderId(), msg.getMessage());
@@ -122,9 +116,7 @@ public class ChatCommand implements Command {
             try {
                 if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2])))
                     return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
-                Chat chat = chatStorage.getChat(Long.parseLong(args[2]));
-                assert (chat != null);
-                ArrayList<Message> messages = chat.findMessage(args[3], messageStore);
+                ArrayList<Message> messages = messageStore.findMessage(args[3], message.getChatId());
                 StringBuilder builder = new StringBuilder();
                 for (Message msg : messages) {
                     String formatMessage = String.format("[chat id = %d ] : [user id = %d]:%s\n", msg.getChatId(), msg.getSenderId(), msg.getMessage());

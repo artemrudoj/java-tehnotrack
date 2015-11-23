@@ -1,13 +1,15 @@
 package ru.mipt.chat;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+
 
 /**
  * Created by artem on 29.10.15.
  */
 public interface ChatStorage {
     long addChat(Chat chat);
-    Chat getChat(long id);
-    LinkedList<Long> getChatsForUser(long userId);
+    ArrayList<Long> getChatsForUser(long userId);
     boolean isChatExist(long userId, long charId);
+
+    ArrayList<Long> getParticipantIds(long chatId);
 }

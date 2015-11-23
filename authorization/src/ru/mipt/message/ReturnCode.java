@@ -4,6 +4,8 @@ package ru.mipt.message;
  * Created by artem on 18.10.15.
  */
 public class ReturnCode {
+    public static final short CHAT_NOT_ADDED = -3;
+    public static final short MESSAGES_NOT_ADDED = -2;
     public static final short NO_CURRENT_SESSION = -1;
     public static final short SUCCESS = 1;
     public static final short SESSION_ALREADY_HAVE_USER = 2;

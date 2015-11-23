@@ -30,35 +30,21 @@ public class BasedOnListStorage implements MessageStore {
     }
 
     @Override
-    public ArrayList<Message> findMessage(String msg) {
-        ArrayList<Message> findedMessages = new ArrayList<Message>();
-        for (Message currentMsg : listStorage) {
-            for (String data : currentMsg.getMessage().split(" ")) {
-                if (msg.equals(data)) {
-                    findedMessages.add(currentMsg);
-                    break;
-                }
-            }
-        }
-        return findedMessages;
-    }
-
-    @Override
-    public ArrayList<Message> returnLastMessages(int N) {
-        ArrayList<Message> lastMessages = new ArrayList<Message>();
-        Iterator<Message> iterator = listStorage.descendingIterator();
-        for (int i = 0; i < N && iterator.hasNext(); i++) {
-            lastMessages.add(iterator.next());
-        }
-        return  lastMessages;
-    }
-
-    @Override
     public Message getMessageById(long id) {
         for (Message message : listStorage) {
             if (message.getMessageId() == id)
                 return message;
         }
+        return null;
+    }
+
+    @Override
+    public ArrayList<Message> findMessage(String msg, long chatId) {
+        return null;
+    }
+
+    @Override
+    public ArrayList<Message> getMessages(long chatId) {
         return null;
     }
 }
