@@ -3,11 +3,11 @@ package ru.mipt.threads;
 
 
 import ru.mipt.authorization.AuthorizationService;
+import ru.mipt.authorization.DataBaseUserStore;
+import ru.mipt.authorization.SimpleUserStore;
 import ru.mipt.authorization.UserStore;
 import ru.mipt.chat.DataBaseChatStorage;
-import ru.mipt.chat.SimpleChatStorage;
 import ru.mipt.comands.*;
-import ru.mipt.messagestore.BasedOnListStorage;
 import ru.mipt.messagestore.DataBaseMessageStore;
 import ru.mipt.messagestore.MessageStore;
 import ru.mipt.message.Message;
@@ -91,14 +91,16 @@ public class ThreadedServer implements MessageListener {
         handlers = new HashMap<>();
         threadIdStrorage = new HashMapThreadIdStrorage();
         sessions = new SessionStorage();
-        userStore = new UserStore();
+        chatStorage = new DataBaseChatStorage(connectionPool);
+        messageStore = new DataBaseMessageStore(connectionPool);
+        userStore = new DataBaseUserStore(connectionPool);
 
         AuthorizationService authService = new AuthorizationService(userStore);
 
         //chatStorage = new SimpleChatStorage();
         //messageStore = new BasedOnListStorage();
-        chatStorage = new DataBaseChatStorage(connectionPool);
-        messageStore = new DataBaseMessageStore(connectionPool);
+
+
 
         Command loginCommand = new LoginCommand(authService, sessions);
         Command registrationCommand = new RegistrationCommand(authService);

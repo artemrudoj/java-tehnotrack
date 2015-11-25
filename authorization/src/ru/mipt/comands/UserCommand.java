@@ -1,12 +1,11 @@
 package ru.mipt.comands;
 
+import ru.mipt.authorization.SimpleUserStore;
 import ru.mipt.authorization.UserStore;
 import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
 import ru.mipt.session.Session;
 import ru.mipt.session.User;
-
-import javax.jws.soap.SOAPBinding;
 
 /**
  * Created by artem on 18.10.15.

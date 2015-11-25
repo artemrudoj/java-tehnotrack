@@ -30,7 +30,7 @@ public class DataBaseMessageStore implements MessageStore {
         try {
             Connection connection = connectionPool.getConnection();
             long messageId = internalCounter.incrementAndGet();
-            String sql = "insert into messages (chatId,senderId,message,time,messageId) " + "values (?,?,?,?,?);";
+            String sql = "insert into \"messages\" (chatId,senderId,message,time,messageId) " + "values (?,?,?,?,?);";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, msg.getChatId());
             stmt.setLong(2, msg.getSenderId());
@@ -55,7 +55,7 @@ public class DataBaseMessageStore implements MessageStore {
     public Message getMessageById(long id) {
         try {
             Connection connection = connectionPool.getConnection();
-            String sql = "SELECT * FROM MESSAGES WHERE messageId=?;";
+            String sql = "SELECT * FROM \"messages\" WHERE messageId=?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -96,7 +96,7 @@ public class DataBaseMessageStore implements MessageStore {
         try {
             ArrayList<Message> messages = new ArrayList<>();
             Connection connection = connectionPool.getConnection();
-            String sql = "SELECT * FROM MESSAGES WHERE chatId=?;";
+            String sql = "SELECT * FROM \"messages\" WHERE chatId=?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, chatId);
             ResultSet rs = stmt.executeQuery();

@@ -17,6 +17,7 @@ public class ReturnCode {
     public static final short INCORRECT_LOGIN_OR_PASSWORD = 8;
     public static final short NO_AUTHORIZE = 9;
     public static final short CHAT_IS_NOT_EXIST = 10;
+    public static final long USER_NOT_ADDED = 11;
 
     public short getReturnCode() {
         return returnCode;
