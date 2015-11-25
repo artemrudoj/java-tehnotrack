@@ -33,10 +33,10 @@ public class DataBaseChatStorage implements ChatStorage{
             PreparedStatement stmt = null;
             assert (chat.getParticipantIds() != null);
             for (long userId : chat.getParticipantIds()) {
-                String sql = "insert into \"chat_to_user\" (chatId,userId) " + "values (?,?);";
+                String sql = "insert into \"chattouser\" (userId,chatId) " + "values (?,?);";
                 stmt = connection.prepareStatement(sql);
-                stmt.setLong(1, chatId);
-                stmt.setLong(2, userId);
+                stmt.setLong(1, userId);
+                stmt.setLong(2, chatId);
                 System.out.println(stmt);
                 stmt.executeUpdate();
             }
@@ -59,7 +59,7 @@ public class DataBaseChatStorage implements ChatStorage{
         try {
             ArrayList<Long> ids = new ArrayList<>();
             Connection connection = connectionPool.getConnection();
-            String sql = "SELECT * FROM \"chat_to_user\" WHERE userId=?;";
+            String sql = "SELECT * FROM \"chattouser\" WHERE userId=?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, userId);
             ResultSet rs = stmt.executeQuery();
@@ -91,7 +91,7 @@ public class DataBaseChatStorage implements ChatStorage{
         try {
             ArrayList<Long> ids = new ArrayList<>();
             Connection connection = connectionPool.getConnection();
-            String sql = "SELECT * FROM \"chat_to_user\" WHERE chatId=?;";
+            String sql = "SELECT * FROM \"chattouser\" WHERE chatId=?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, chatId);
             ResultSet rs = stmt.executeQuery();

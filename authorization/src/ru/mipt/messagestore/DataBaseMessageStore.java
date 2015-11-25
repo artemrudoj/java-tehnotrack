@@ -30,13 +30,13 @@ public class DataBaseMessageStore implements MessageStore {
         try {
             Connection connection = connectionPool.getConnection();
             long messageId = internalCounter.incrementAndGet();
-            String sql = "insert into \"messages\" (chatId,senderId,message,time,messageId) " + "values (?,?,?,?,?);";
+            String sql = "insert into \"message\" (time,senderid,messageid,message,chatid) " + "values (?,?,?,?,?);";
             PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setLong(1, msg.getChatId());
+            stmt.setLong(5, msg.getChatId());
             stmt.setLong(2, msg.getSenderId());
-            stmt.setString(3, msg.getMessage());
-            stmt.setLong(4, msg.getTime());
-            stmt.setLong(5, messageId);
+            stmt.setString(4, msg.getMessage());
+            stmt.setLong(1, msg.getTime());
+            stmt.setLong(3, messageId);
             System.out.println(stmt);
             stmt.executeUpdate();
             stmt.close();
@@ -55,7 +55,7 @@ public class DataBaseMessageStore implements MessageStore {
     public Message getMessageById(long id) {
         try {
             Connection connection = connectionPool.getConnection();
-            String sql = "SELECT * FROM \"messages\" WHERE messageId=?;";
+            String sql = "SELECT * FROM \"message\" WHERE messageId=?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, id);
             ResultSet rs = stmt.executeQuery();
@@ -96,7 +96,7 @@ public class DataBaseMessageStore implements MessageStore {
         try {
             ArrayList<Message> messages = new ArrayList<>();
             Connection connection = connectionPool.getConnection();
-            String sql = "SELECT * FROM \"messages\" WHERE chatId=?;";
+            String sql = "SELECT * FROM \"message\" WHERE chatId=?;";
             PreparedStatement stmt = connection.prepareStatement(sql);
             stmt.setLong(1, chatId);
             ResultSet rs = stmt.executeQuery();
