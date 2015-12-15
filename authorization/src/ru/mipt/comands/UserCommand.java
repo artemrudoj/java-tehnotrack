@@ -24,6 +24,8 @@ public class UserCommand implements Command {
             return new ReturnCode(ReturnCode.NO_CURRENT_SESSION);
         String args[] = message.getMessage().split(" ");
         User user = null;
+        if (args.length == 1)
+            return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);
         if (args[1].equals("info")) {
             if ((args.length != 2) && (args.length != 3))
                 return new ReturnCode(ReturnCode.INCORRECT_ARGUMENTS);

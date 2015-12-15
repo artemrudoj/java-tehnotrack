@@ -2,6 +2,7 @@ package ru.mipt.threads;
 
 
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
 import ru.mipt.authorization.AuthorizationService;
 import ru.mipt.authorization.DataBaseUserStore;
 import ru.mipt.authorization.SimpleUserStore;
@@ -17,7 +18,7 @@ import ru.mipt.chat.ChatStorage;
 import ru.mipt.session.SessionStorage;
 import ru.mipt.threadstrorage.HashMapThreadIdStrorage;
 import ru.mipt.threadstrorage.ThreadsIdStorage;
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+//import com.mchange.v2.c3p0.ComboPooledDataSource;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -84,7 +85,7 @@ public class ThreadedServer implements MessageListener {
         return null;
     }
 
-    private void startServer() throws Exception {
+    public void startServer() throws Exception {
 
         Map<String, Command> commands = new HashMap<>();
         internalCounter = new AtomicLong(0);
@@ -120,6 +121,8 @@ public class ThreadedServer implements MessageListener {
 
         isRunning = true;
         while (isRunning) {
+            if(sSocket.isClosed())
+                return;
             Socket socket = sSocket.accept();
 
             long sessionId = internalCounter.incrementAndGet();
@@ -137,8 +140,13 @@ public class ThreadedServer implements MessageListener {
 
     public void stopServer() {
         isRunning = false;
-        for (ConnectionHandler handler : handlers.values()) {
-            handler.stop();
+//        for (ConnectionHandler handler : handlers.values()) {
+//            handler.stop();
+//        }
+        try {
+            sSocket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

@@ -55,7 +55,7 @@ public class InputHandler {
             }
             data = returnCode.getMsg();
 
-            assert(session != null);
+//            assert(session != null);
         } else {
             if (session != null) {
                 code = ReturnCode.COMMAND_NOT_FOUNDED;

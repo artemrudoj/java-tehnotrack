@@ -20,6 +20,11 @@ public class ThreadedClient implements MessageListener {
     long sessionId;
     User user;
 
+
+    public ConnectionHandler getHandler() {
+        return handler;
+    }
+
     public ThreadedClient() {
         validator = new MessageValidator();
         sessionId = ReturnCode.NO_CURRENT_SESSION;
@@ -81,7 +86,7 @@ public class ThreadedClient implements MessageListener {
         while (true) {
             String input = scanner.nextLine();
             if ("q".equals(input)) {
-                return;
+                return ;
             }
             client.processInput(input);
         }
