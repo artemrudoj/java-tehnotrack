@@ -57,9 +57,9 @@ public class ThreadedServer implements MessageListener {
             Class.forName("org.postgresql.Driver");
             connectionPool = new ComboPooledDataSource();
             connectionPool.setDriverClass("org.postgresql.Driver"); //loads the jdbc driver
-            connectionPool.setJdbcUrl("jdbc:postgresql://178.62.140.149:5432/artemrudoj");
-            connectionPool.setUser("senthil");
-            connectionPool.setPassword("ubuntu");
+            connectionPool.setJdbcUrl("jdbc:postgresql://127.0.0.1:5432/internet_tech_db");
+            connectionPool.setUser("postgres");
+            connectionPool.setPassword("123");
             connectionPool.setMinPoolSize(5);
             connectionPool.setAcquireIncrement(5);
             connectionPool.setMaxPoolSize(20);

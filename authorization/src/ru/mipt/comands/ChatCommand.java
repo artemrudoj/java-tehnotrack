@@ -99,7 +99,7 @@ public class ChatCommand implements Command {
             try {
                 if (!chatStorage.isChatExist(session.getSessionUser().getUserId(), Long.parseLong(args[2])))
                     return new ReturnCode(ReturnCode.CHAT_IS_NOT_EXIST);
-                ArrayList<Message> messages = messageStore.getMessages(message.getChatId());
+                ArrayList<Message> messages = messageStore.getMessages(Long.parseLong(args[2]));
                 StringBuilder builder = new StringBuilder();
                 for (Message msg : messages) {
                     String formatMessage = String.format("[chat id = %d ] : [user id = %d]:%s\n", msg.getChatId(), msg.getSenderId(), msg.getMessage());

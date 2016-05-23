@@ -16,10 +16,10 @@ public class DataBaseHelper {
 
         PGPoolingDataSource source = new PGPoolingDataSource();
         source.setDataSourceName("My DB");
-        source.setServerName("178.62.140.149");
-        source.setDatabaseName("arhangeldim");
-        source.setUser("senthil");
-        source.setPassword("ubuntu");
+        source.setServerName("127.0.0.1:5432");
+        source.setDatabaseName("internet_tech_db");
+        source.setUser("artem");
+        source.setPassword("1");
         source.setMaxConnections(10);
 
         Connection connection = null;
