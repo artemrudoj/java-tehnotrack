@@ -1,0 +1,26 @@
+package ru.mipt.comands;
+
+
+import ru.mipt.message.Message;
+import ru.mipt.message.ReturnCode;
+import ru.mipt.session.Session;
+
+/**
+ * Интерфейс для всех команд
+ *
+ *  То есть, даже имея возможность определить здесь абстрактный метод execute() я предпочту интерфейс
+ * потому что интерфейс определяет поведение (свойство)
+ *
+ * А цель абстрактного класса - переиспользование кода
+ */
+public interface Command {
+
+
+    /**
+     * Здесь можно возвращать результат, подумайте как лучше сделать
+     * результат желательно инкапсулировать в неком объекте Result
+     *
+     * В качестве пример оставлю void
+     */
+    ReturnCode execute(Session session, Message message);
+}
