@@ -12,13 +12,15 @@ import java.util.Scanner;
 
 public class ThreadedClient implements MessageListener {
 
-    public static final int PORT = 19000;
-    public static final String HOST = "localhost";
-    private MessageValidator validator;
-
-    ConnectionHandler handler;
     long sessionId;
     User user;
+    private MessageValidator validator;
+    public static final int PORT = 19000;
+    public static final String HOST = "localhost";
+
+
+    ConnectionHandler handler;
+
 
 
     public ConnectionHandler getHandler() {

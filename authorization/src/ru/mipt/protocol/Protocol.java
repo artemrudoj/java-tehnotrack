@@ -4,6 +4,7 @@ package ru.mipt.protocol;
 import ru.mipt.message.Message;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 
 /**
  *
@@ -11,6 +12,7 @@ import java.io.*;
 public class Protocol {
 
     public static Message decode(byte[] bytes) {
+        String str = new String(bytes, StandardCharsets.UTF_8);
         ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
         ObjectInput in = null;
         Message message = null;
