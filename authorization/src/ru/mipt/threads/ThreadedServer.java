@@ -105,14 +105,14 @@ public class ThreadedServer implements MessageListener {
 
         Command loginCommand = new LoginCommand(authService, sessions);
         Command registrationCommand = new RegistrationCommand(authService);
-        Command helpCommand = new HelpCommand(commands);
+
         Command userCommand = new UserCommand(userStore);
         Command chatCommand = new ChatCommand(chatStorage, userStore, messageStore);
 
         commands.put("\\user", userCommand);
         commands.put("\\login", loginCommand);
         commands.put("\\registration", registrationCommand);
-        commands.put("\\help", helpCommand);
+
         commands.put("\\chat", chatCommand);
 
 

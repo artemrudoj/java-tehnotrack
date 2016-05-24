@@ -3,10 +3,8 @@ package ru.mipt.threads;
 import ru.mipt.comands.CommandType;
 import ru.mipt.message.Message;
 import ru.mipt.message.ReturnCode;
-import ru.mipt.protocol.Protocol;
 import ru.mipt.session.User;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -52,14 +50,13 @@ public class SocketConnectionHandler implements ConnectionHandler {
         out.flush();
     }
 
-    // Добавить еще подписчика
+
     @Override
     public void addListener(MessageListener listener) {
         listeners.add(listener);
     }
 
 
-    // Разослать всем
     public void notifyListeners(Message msg) {
         listeners.forEach(it -> it.onMessage(msg));
     }
@@ -72,7 +69,7 @@ public class SocketConnectionHandler implements ConnectionHandler {
                 int read = in.read(buf);
                 if (read > 0) {
 
-                    //Message msg = Protocol.decode(Arrays.copyOf(buf, read));
+
                     Message msg = processInput(Arrays.copyOf(buf, read));
                     //log.info("message received: {}", msg);
 
